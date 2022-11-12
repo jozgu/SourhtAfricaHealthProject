@@ -40,7 +40,6 @@ data.columns = cols
 results = pd.DataFrame(file['chd'])
 
 #Make data a torch tensor
-
 test = data.tobacco
 X = data.drop('tobacco', axis = 1)
 
@@ -49,24 +48,23 @@ y = torch.tensor(test.values, dtype = torch.float)
 y = y.view(y.shape[0],1)
 
 #Model
-n_features = len(cols)
+n_features = len(cols) - 1
 input_size = n_features
 output_size = 1
 
-input_size = n_features-1
 model = nn.Linear(input_size, output_size)
 
 #Loss & Optimizer
-criterion = nn.MSELoss()
+loss_function = nn.MSELoss()
 learning_rate = 0.01
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = 0)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = 1)
 
 #Training
 epochs = 1000
 for epoch in range(epochs):
     #Forwards pass + loss
     y_predicted = model(x.float())
-    loss = criterion(y_predicted, y)
+    loss = loss_function(y_predicted, y)
     
     
     #Backwards pass
@@ -82,7 +80,6 @@ for epoch in range(epochs):
         
 #plot
 predicted = model(x).detach()
-print(predicted)
-plt.plot(x, y, 'ro')
-plt.plot(x, predicted, 'b')
+plt.plot(y, 'ro')
+plt.plot(predicted, 'b')
     
