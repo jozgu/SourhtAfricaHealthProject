@@ -23,7 +23,6 @@ import statsmodels.formula.api as sm
 from scipy import stats
 import tensorflow as tf
 
-%matplotlib inline
 
 #Data preparation
 file = pd.read_csv(r"C:\Users\Chris\Desktop\DTU\3. Semester\02450 - Introduction to Machine Learning and Data Mining\Projekt 2\heart_data.txt")
@@ -60,7 +59,7 @@ model = nn.Linear(input_size, output_size)
 loss_function = nn.MSELoss()
 learning_rate = 0.01
 
-wd = 0.001 #Use this if not looping
+#wd = 0.001 #Use this if not looping
 
 step = []
 training_loss = []
