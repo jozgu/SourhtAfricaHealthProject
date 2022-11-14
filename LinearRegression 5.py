@@ -111,4 +111,4 @@ plt.show()
 
 
 print(index(min(testing_loss)))
-
+# print(step[79])
