@@ -110,5 +110,5 @@ plt.ylabel('Loss')
 plt.show()
 
 
-print(index(min(testing_loss)))
-# print(step[79])
+print(min(testing_loss))
+
