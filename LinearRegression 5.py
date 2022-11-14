@@ -19,9 +19,7 @@ from scipy.stats import zscore
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 import numpy as np
-import statsmodels.formula.api as sm
 from scipy import stats
-import tensorflow as tf
 
 
 #Data preparation
@@ -46,7 +44,7 @@ x = torch.tensor(X.values, dtype = torch.float)
 y = torch.tensor(test.values, dtype = torch.float)
 y = y.view(y.shape[0],1)
 
-X_train, X_test, y_train, y_test = train_test_split(x, y)
+X_train, X_test, y_train, y_test = train_test_split(x, y, random_state=25)
 
 #Model
 n_features = len(cols) - 1
@@ -65,37 +63,38 @@ step = []
 training_loss = []
 testing_loss = []
 
+for wd in np.arange(0,2,0.01):   
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = wd)
+    
+    #Training
+    epochs = 100
 
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = wd)
-    
-#Training
-epochs = 100
-for epoch in range(epochs):
-    #Forwards pass + loss
-    y_predicted = model(X_train.float())
-    loss = loss_function(y_predicted, y_train)
-    
-    
-    #Backwards pass
-    loss.backward()
-    
-    #update
-    optimizer.step()
-    
-    optimizer.zero_grad()
+    for epoch in range(epochs):
+        #Forwards pass + loss
+        y_predicted = model(X_train.float())
+        loss = loss_function(y_predicted, y_train)
+        
+        
+        #Backwards pass
+        loss.backward()
+        
+        #update
+        optimizer.step()
+        
+        optimizer.zero_grad()
     
     #if (epoch+1) % 100 == 0:
      #   print(f'epoch: {epoch+1}, lambda = {wd:.3f}, loss = {loss.item():.4f}')
 
 
-#Testing
-test_predicted = model(X_test.float())
-test_loss = loss_function(test_predicted, y_test)
-test_loss = test_loss.detach()
+    #Testing
+    test_predicted = model(X_test.float())
+    test_loss = loss_function(test_predicted, y_test)
+    test_loss = test_loss.detach()
 
-step.append(wd)
-training_loss.append(loss.item())
-testing_loss.append(test_loss)
+    step.append(wd)
+    training_loss.append(loss.item())
+    testing_loss.append(test_loss)
 
 #plot
 predicted = model(X_test).detach()
@@ -111,6 +110,5 @@ plt.ylabel('Loss')
 plt.show()
 
 
+print(index(min(testing_loss)))
 
-
-    
